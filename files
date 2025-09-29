@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>AR Poster</title>
+
+  <!-- A-Frame -->
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+
+  <!-- MindAR (image tracking) -->
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+</head>
+<body>
+  <a-scene mindar-image="imageTargetSrc: targets.mind; maxTrack: 1;" embedded>
+    <a-assets>
+      <video id="clip" src="clip.mp4" loop="true" playsinline webkit-playsinline></video>
+    </a-assets>
+
+    <!-- Attach video to your poster target -->
+    <a-entity mindar-image-target="targetIndex: 0">
+      <a-plane position="0 0 0" rotation="0 0 0" width="1" height="0.56"
+               material="src: #clip;"></a-plane>
+    </a-entity>
+
+    <a-entity camera></a-entity>
+  </a-scene>
+
+  <script>
+    const videoEl = document.getElementById("clip");
+    const targetEntity = document.querySelector("[mindar-image-target]");
+
+    targetEntity.addEventListener("targetFound", () => {
+      videoEl.play();
+    });
+    targetEntity.addEventListener("targetLost", () => {
+      videoEl.pause();
+      videoEl.currentTime = 0;
+    });
+  </script>
+</body>
+</html>
