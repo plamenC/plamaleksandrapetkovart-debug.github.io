@@ -53,7 +53,7 @@
     // Adjust video position based on browser
     if (isChrome && !isBrave) {
       // Chrome mobile browsers need offset to align with camera center
-      videoElement.setAttribute('position', '0 -1 0'); //move the video down by 0.5 units
+      // videoElement.setAttribute('position', '0 -1 0'); //move the video down by 0.5 units
       console.log("Chrome detected - applying position offset");
     } else {
       console.log("Brave or other browser detected - using default position");
