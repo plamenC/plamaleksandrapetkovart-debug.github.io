@@ -9,39 +9,82 @@
   <!-- A-Frame -->
   <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
 
-  <!-- MindAR (image tracking) -->
-  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+  <!-- AR.js with Image Tracking -->
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
 </head>
 
-<body>
+<style>
+  .arjs-loader {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .arjs-loader div {
+    text-align: center;
+    font-size: 1.25em;
+    color: white;
+  }
+
+  a-scene {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+  }
+</style>
+
+<body style="margin: 0px; overflow: hidden;">
   <h1>ALI</h1>
-  <a-scene mindar-image="imageTargetSrc: targets.mind;" color-space="sRGB"
-    renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false"
-    device-orientation-permission-ui="enabled: false">
+
+  <!-- Loading indicator -->
+  <div class="arjs-loader">
+    <div>Loading, please wait...</div>
+  </div>
+
+  <a-scene vr-mode-ui="enabled: false"
+    renderer="logarithmicDepthBuffer: true; colorManagement: true; physicallyCorrectLights: true" embedded
+    arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;">
     <a-assets>
       <video id="clip" src="clip.mp4" autoplay="false" loop="true" crossOrigin="anonymous"></video>
     </a-assets>
 
     <a-camera position="0 0 0" look-controls="enabled: true"></a-camera>
-    <a-entity mindar-image-target="targetIndex: 0">
-      <a-video src="#clip" position="0 0 0" height="1" width="0.707" rotation="0 0 0"></a-video>
-    </a-entity>
+
+    <!-- Image tracking target -->
+    <a-nft type="nft" url="targets" smooth="true" smoothCount="10" smoothTolerance=".01" smoothThreshold="5">
+      <a-video id="video-element" src="#clip" position="0 0 0.1" height="1" width="0.65" rotation="0 0 0"></a-video>
+    </a-nft>
   </a-scene>
-
-
-
-
 
   <script>
     const videoEl = document.getElementById("clip");
-    const targetEntity = document.querySelector("[mindar-image-target]");
+    const nftEntity = document.querySelector("a-nft");
 
-    targetEntity.addEventListener("targetFound", () => {
-      console.log("targetFound");
+    // Hide loader when AR.js is ready
+    window.addEventListener('arjs-video-loaded', () => {
+      const loader = document.querySelector('.arjs-loader');
+      if (loader) {
+        loader.style.display = 'none';
+      }
+    });
+
+    // AR.js events
+    nftEntity.addEventListener("markerFound", () => {
+      console.log("markerFound");
       videoEl.play();
     });
-    targetEntity.addEventListener("targetLost", () => {
-      console.log("targetLost");
+
+    nftEntity.addEventListener("markerLost", () => {
+      console.log("markerLost");
       videoEl.pause();
       videoEl.currentTime = 0;
     });
