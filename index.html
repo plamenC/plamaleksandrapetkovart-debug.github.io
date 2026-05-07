@@ -61,19 +61,19 @@
     const statusText = document.getElementById("statusText");
 
     target0.addEventListener("targetFound", () => {
-      clip4.play();
+      clip6.play();
     });
     target0.addEventListener("targetLost", () => {
-      clip4.pause();
-      clip4.currentTime = 0;
+      clip6.pause();
+      clip6.currentTime = 0;
     });
 
     target1.addEventListener("targetFound", () => {
-      clip6.play();
+      clip4.play();
     });
     target1.addEventListener("targetLost", () => {
-      clip6.pause();
-      clip6.currentTime = 0;
+      clip4.pause();
+      clip4.currentTime = 0;
     });
 
     target2.addEventListener("targetFound", () => {
