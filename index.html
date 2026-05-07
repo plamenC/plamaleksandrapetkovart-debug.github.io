@@ -1,75 +1,57 @@
 <!doctype html>
 <html>
-
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>AR Poster</title>
+  <title>AR</title>
 
   <!-- A-Frame -->
-  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
 
   <!-- MindAR (image tracking) -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 </head>
-<style>
-  a-scene {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-  }
-</style>
-
-
 <body>
-  <a-scene mindar-image="imageTargetSrc: targets.mind;" color-space="sRGB"
-    renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false"
-    device-orientation-permission-ui="enabled: false">
+  <a-scene mindar-image="imageTargetSrc: targets.mind; maxTrack: 1;" embedded>
     <a-assets>
-      <video id="clip" src="clip.mp4" autoplay="false" loop="true" crossOrigin="anonymous"></video>
+      <video id="clip4" src="clip4.mp4" loop playsinline muted></video>
+      <video id="clip6" src="clip6.mp4" loop playsinline muted></video>
     </a-assets>
 
-    <a-camera position="0 0 0" look-controls="enabled: true"></a-camera>
-    <a-entity mindar-image-target="targetIndex: 0">
-      <a-video id="video-element" src="#clip" position="0 0 0" height="1.41" width="1" rotation="0 0 0"></a-video>
+    <!-- Attach video to your poster target -->
+    <a-entity id="target3" mindar-image-target="targetIndex: 3">
+      <a-plane width="1" height="0.56" material="src: #clip4;"></a-plane>
     </a-entity>
+
+    <a-entity id="target5" mindar-image-target="targetIndex: 5">
+      <a-plane width="1" height="0.56" material="src: #clip6;"></a-plane>
+    </a-entity>
+
+    <a-entity camera></a-entity>
   </a-scene>
 
-
-
-
-
   <script>
-    const videoEl = document.getElementById("clip");
-    const videoElement = document.getElementById("video-element");
-    const targetEntity = document.querySelector("[mindar-image-target]");
+    const video1 = document.getElementById("clip4");
+    const video2 = document.getElementById("clip6");
 
-    // Browser detection for positioning fix
-    const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
-    const isBrave = /Brave/.test(navigator.userAgent) || navigator.brave && typeof navigator.brave.isBrave === 'function';
+    const target3 = document.getElementById("target3");
+    const target5 = document.getElementById("target5");
 
-    // Adjust video position based on browser
-    if (isChrome && !isBrave) {
-      // Chrome mobile browsers need offset to align with camera center
-      // videoElement.setAttribute('position', '0 -1 0'); //move the video down by 0.5 units
-      console.log("Chrome detected - applying position offset");
-    } else {
-      console.log("Brave or other browser detected - using default position");
-    }
-
-    targetEntity.addEventListener("targetFound", () => {
-      console.log("targetFound");
-      videoEl.play();
+    target3.addEventListener("targetFound", () => {
+      video1.play();
     });
-    targetEntity.addEventListener("targetLost", () => {
-      console.log("targetLost");
-      videoEl.pause();
-      videoEl.currentTime = 0;
+    target3.addEventListener("targetLost", () => {
+      video1.pause();
+      video1.currentTime = 0;
+    });
+
+    target5.addEventListener("targetFound", () => {
+      video2.play();
+    });
+    target5.addEventListener("targetLost", () => {
+      video2.pause();
+      video2.currentTime = 0;
     });
   </script>
 </body>
-
-
 </html>
