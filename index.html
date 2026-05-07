@@ -33,19 +33,19 @@
   >
     <a-assets>
       <video id="clip4" src="clip4.mp4" autoplay="true" loop="true" playsinline muted crossOrigin="anonymous"></video>
-      <video id="clip6" src="clip6.mp4" autoplay="false" loop="true" playsinline muted crossOrigin="anonymous"></video>
+      <video id="clip6" src="clip6.mp4" autoplay="true" loop="true" playsinline muted crossOrigin="anonymous"></video>
     </a-assets>
 
     <a-entity id="target0" mindar-image-target="targetIndex: 0">
-      <a-video src="#clip4" position="0 0 0" width="1" height="0.56" rotation="0 0 0"></a-video>
+      <a-video src="#clip4" position="0 0 0" width="1" height="1" rotation="0 0 0"></a-video>
     </a-entity>
 
     <a-entity id="target1" mindar-image-target="targetIndex: 1">
-      <a-video src="#clip6" position="0 0 0" width="1" height="0.56" rotation="0 0 0"></a-video>
+      <a-video src="#clip6" position="0 0 0" width="1" height="1" rotation="0 0 0"></a-video>
     </a-entity>
 
     <a-entity id="target2" mindar-image-target="targetIndex: 2">
-      <a-plane width="1" height="0.56" color="#000000" opacity="0.2"></a-plane>
+      <a-plane width="1" height="1" color="#000000" opacity="0.2"></a-plane>
     </a-entity>
 
     <a-camera position="0 0 0" look-controls="enabled: true"></a-camera>
@@ -81,7 +81,7 @@
     });
 
     target2.addEventListener("targetFound", () => {
-      statusText.textContent = "target2 found. waiting for targets";
+      statusText.textContent = "target2 found.";
     });
     target2.addEventListener("targetLost", () => {
       statusText.textContent = "target2 lost. waiting for targets";
