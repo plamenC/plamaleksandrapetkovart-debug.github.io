@@ -37,11 +37,11 @@
     </a-assets>
 
     <a-entity id="target0" mindar-image-target="targetIndex: 0">
-      <a-video src="#clip4" position="0 0 0" width="1" height="0.8" rotation="0 0 0"></a-video>
+      <a-video src="#clip6" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
     </a-entity>
 
     <a-entity id="target1" mindar-image-target="targetIndex: 1">
-      <a-video src="#clip6" position="0 0 0" width="1" height="0.6" rotation="0 0 0"></a-video>
+      <a-video src="#clip4" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
     </a-entity>
 
     <a-entity id="target2" mindar-image-target="targetIndex: 2">
@@ -59,25 +59,45 @@
     const target1 = document.getElementById("target1");
     const target2 = document.getElementById("target2");
     const statusText = document.getElementById("statusText");
+    let isTarget0Visible = false;
+    let isTarget1Visible = false;
+
+    const syncClipState = () => {
+      if (isTarget0Visible) {
+        clip6.play();
+      } else {
+        clip6.pause();
+        clip6.currentTime = 0;
+      }
+
+      if (isTarget1Visible) {
+        clip4.play();
+      } else {
+        clip4.pause();
+        clip4.currentTime = 0;
+      }
+    };
 
     target0.addEventListener("targetFound", () => {
-      clip6.play();
-      statusText.textContent = "target0 found, playing clip4(blue poster)";
+      isTarget0Visible = true;
+      syncClipState();
+      statusText.textContent = "target0 found, playing clip6";
     });
     target0.addEventListener("targetLost", () => {
-      clip6.pause();
-      clip6.currentTime = 0;
-      statusText.textContent = "target0 lost, waiting for targets, stopping clip4(blue poster)";
+      isTarget0Visible = false;
+      syncClipState();
+      statusText.textContent = "target0 lost, waiting for targets, stopping clip6";
     });
 
     target1.addEventListener("targetFound", () => {
-      clip4.play();
-      statusText.textContent = "target1 found, playing clip6(orange poster)";
+      isTarget1Visible = true;
+      syncClipState();
+      statusText.textContent = "target1 found, playing clip4";
     });
     target1.addEventListener("targetLost", () => {
-      clip4.pause();
-      clip4.currentTime = 0;
-      statusText.textContent = "target1 lost, waiting for targets, stopping clip6(orange poster)";
+      isTarget1Visible = false;
+      syncClipState();
+      statusText.textContent = "target1 lost, waiting for targets, stopping clip4";
     });
 
     target2.addEventListener("targetFound", () => {
