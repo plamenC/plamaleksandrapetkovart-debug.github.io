@@ -22,7 +22,7 @@
 </style>
 <body>
   <div id="statusText" style="position: fixed; top: 12px; left: 12px; z-index: 9999; background: rgba(0,0,0,0.7); color: #fff; padding: 8px 10px; border-radius: 6px; font-family: Arial, sans-serif;">
-    waiting for target2
+    waiting for targets
   </div>
   <a-scene
     mindar-image="imageTargetSrc: targets.mind; maxTrack: 2;"
@@ -62,29 +62,29 @@
 
     target0.addEventListener("targetFound", () => {
       clip6.play();
-      statusText.textContent = "target0 found, playing clip6(blue poster)";
+      statusText.textContent = "target0 found, playing clip4(blue poster)";
     });
     target0.addEventListener("targetLost", () => {
       clip6.pause();
       clip6.currentTime = 0;
-      statusText.textContent = "target0 lost, stopping clip6(blue poster)";
+      statusText.textContent = "target0 lost, waiting for targets, stopping clip4(blue poster)";
     });
 
     target1.addEventListener("targetFound", () => {
       clip4.play();
-      statusText.textContent = "target1 found, playing clip4(orange poster)";
+      statusText.textContent = "target1 found, playing clip6(orange poster)";
     });
     target1.addEventListener("targetLost", () => {
       clip4.pause();
       clip4.currentTime = 0;
-      statusText.textContent = "target1 lost, stopping clip4(orange poster)";
+      statusText.textContent = "target1 lost, waiting for targets, stopping clip6(orange poster)";
     });
 
     target2.addEventListener("targetFound", () => {
-      statusText.textContent = "target2 found";
+      statusText.textContent = "target2 found. waiting for targets";
     });
     target2.addEventListener("targetLost", () => {
-      statusText.textContent = "target2 lost";
+      statusText.textContent = "target2 lost. waiting for targets";
     });
   </script>
 </body>
