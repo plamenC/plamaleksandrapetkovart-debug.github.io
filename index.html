@@ -3,43 +3,57 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>AR</title>
+  <title>AR Poster</title>
 
   <!-- A-Frame -->
-  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
 
   <!-- MindAR (image tracking) -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 </head>
+<style>
+  a-scene {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+  }
+</style>
 <body>
   <div id="statusText" style="position: fixed; top: 12px; left: 12px; z-index: 9999; background: rgba(0,0,0,0.7); color: #fff; padding: 8px 10px; border-radius: 6px; font-family: Arial, sans-serif;">
     waiting for target2
   </div>
-  <a-scene mindar-image="imageTargetSrc: targets.mind; maxTrack: 1;" embedded>
+  <a-scene
+    mindar-image="imageTargetSrc: targets.mind; maxTrack: 2;"
+    color-space="sRGB"
+    renderer="colorManagement: true, physicallyCorrectLights"
+    vr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false"
+  >
     <a-assets>
-      <video id="clip4" src="clip4.mp4" loop playsinline muted></video>
-      <video id="clip6" src="clip6.mp4" loop playsinline muted></video>
+      <video id="clip4" src="clip4.mp4" autoplay="false" loop="true" playsinline muted crossOrigin="anonymous"></video>
+      <video id="clip6" src="clip6.mp4" autoplay="false" loop="true" playsinline muted crossOrigin="anonymous"></video>
     </a-assets>
 
-    <!-- Attach video to your poster target -->
     <a-entity id="target0" mindar-image-target="targetIndex: 0">
-      <a-plane width="1" height="0.56" material="src: #clip4;"></a-plane>
+      <a-video src="#clip4" position="0 0 0" width="1" height="0.56" rotation="0 0 0"></a-video>
     </a-entity>
 
     <a-entity id="target1" mindar-image-target="targetIndex: 1">
-      <a-plane width="1" height="0.56" material="src: #clip6;"></a-plane>
+      <a-video src="#clip6" position="0 0 0" width="1" height="0.56" rotation="0 0 0"></a-video>
     </a-entity>
 
     <a-entity id="target2" mindar-image-target="targetIndex: 2">
-      <a-plane width="1" height="0.56" material="src: #clip6;"></a-plane>
+      <a-plane width="1" height="0.56" color="#000000" opacity="0.2"></a-plane>
     </a-entity>
 
-    <a-entity camera></a-entity>
+    <a-camera position="0 0 0" look-controls="enabled: true"></a-camera>
   </a-scene>
 
   <script>
-    const video1 = document.getElementById("clip4");
-    const video2 = document.getElementById("clip6");
+    const clip4 = document.getElementById("clip4");
+    const clip6 = document.getElementById("clip6");
 
     const target0 = document.getElementById("target0");
     const target1 = document.getElementById("target1");
@@ -47,21 +61,21 @@
     const statusText = document.getElementById("statusText");
 
     target0.addEventListener("targetFound", () => {
-      video1.play();
+      clip4.play();
     });
     target0.addEventListener("targetLost", () => {
-      video1.pause();
-      video1.currentTime = 0;
+      clip4.pause();
+      clip4.currentTime = 0;
     });
-        
+
     target1.addEventListener("targetFound", () => {
-      video2.play();
+      clip6.play();
     });
     target1.addEventListener("targetLost", () => {
-      video2.pause();
-      video2.currentTime = 0;
+      clip6.pause();
+      clip6.currentTime = 0;
     });
-    
+
     target2.addEventListener("targetFound", () => {
       statusText.textContent = "target2 found";
     });
