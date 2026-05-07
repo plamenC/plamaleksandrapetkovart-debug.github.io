@@ -12,6 +12,9 @@
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 </head>
 <body>
+  <div id="statusText" style="position: fixed; top: 12px; left: 12px; z-index: 9999; background: rgba(0,0,0,0.7); color: #fff; padding: 8px 10px; border-radius: 6px; font-family: Arial, sans-serif;">
+    waiting for target2
+  </div>
   <a-scene mindar-image="imageTargetSrc: targets.mind; maxTrack: 1;" embedded>
     <a-assets>
       <video id="clip4" src="clip4.mp4" loop playsinline muted></video>
@@ -27,6 +30,10 @@
       <a-plane width="1" height="0.56" material="src: #clip6;"></a-plane>
     </a-entity>
 
+    <a-entity id="target2" mindar-image-target="targetIndex: 2">
+      <a-plane width="1" height="0.56" material="src: #clip6;"></a-plane>
+    </a-entity>
+
     <a-entity camera></a-entity>
   </a-scene>
 
@@ -36,6 +43,8 @@
 
     const target0 = document.getElementById("target0");
     const target1 = document.getElementById("target1");
+    const target2 = document.getElementById("target2");
+    const statusText = document.getElementById("statusText");
 
     target0.addEventListener("targetFound", () => {
       video1.play();
@@ -44,13 +53,20 @@
       video1.pause();
       video1.currentTime = 0;
     });
-
+        
     target1.addEventListener("targetFound", () => {
       video2.play();
     });
     target1.addEventListener("targetLost", () => {
       video2.pause();
       video2.currentTime = 0;
+    });
+    
+    target2.addEventListener("targetFound", () => {
+      statusText.textContent = "target2 found";
+    });
+    target2.addEventListener("targetLost", () => {
+      statusText.textContent = "target2 lost";
     });
   </script>
 </body>
