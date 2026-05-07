@@ -32,7 +32,7 @@
     device-orientation-permission-ui="enabled: false"
   >
     <a-assets>
-      <video id="clip4" src="clip4.mp4" autoplay="false" loop="true" playsinline muted crossOrigin="anonymous"></video>
+      <video id="clip4" src="clip4.mp4" autoplay="true" loop="true" playsinline muted crossOrigin="anonymous"></video>
       <video id="clip6" src="clip6.mp4" autoplay="false" loop="true" playsinline muted crossOrigin="anonymous"></video>
     </a-assets>
 
@@ -62,18 +62,22 @@
 
     target0.addEventListener("targetFound", () => {
       clip6.play();
+      statusText.textContent = "target0 found, playing clip6(blue poster)";
     });
     target0.addEventListener("targetLost", () => {
       clip6.pause();
       clip6.currentTime = 0;
+      statusText.textContent = "target0 lost, stopping clip6(blue poster)";
     });
 
     target1.addEventListener("targetFound", () => {
       clip4.play();
+      statusText.textContent = "target1 found, playing clip4(orange poster)";
     });
     target1.addEventListener("targetLost", () => {
       clip4.pause();
       clip4.currentTime = 0;
+      statusText.textContent = "target1 lost, stopping clip4(orange poster)";
     });
 
     target2.addEventListener("targetFound", () => {
