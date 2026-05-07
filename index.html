@@ -19,11 +19,11 @@
     </a-assets>
 
     <!-- Attach video to your poster target -->
-    <a-entity id="target3" mindar-image-target="targetIndex: 3">
+    <a-entity id="target1" mindar-image-target="targetIndex: 1">
       <a-plane width="1" height="0.56" material="src: #clip4;"></a-plane>
     </a-entity>
 
-    <a-entity id="target5" mindar-image-target="targetIndex: 5">
+    <a-entity id="target2" mindar-image-target="targetIndex: 2">
       <a-plane width="1" height="0.56" material="src: #clip6;"></a-plane>
     </a-entity>
 
@@ -34,21 +34,21 @@
     const video1 = document.getElementById("clip4");
     const video2 = document.getElementById("clip6");
 
-    const target3 = document.getElementById("target3");
-    const target5 = document.getElementById("target5");
+    const target1 = document.getElementById("target1");
+    const target2 = document.getElementById("target2");
 
-    target3.addEventListener("targetFound", () => {
+    target1.addEventListener("targetFound", () => {
       video1.play();
     });
-    target3.addEventListener("targetLost", () => {
+    target1.addEventListener("targetLost", () => {
       video1.pause();
       video1.currentTime = 0;
     });
 
-    target5.addEventListener("targetFound", () => {
+    target2.addEventListener("targetFound", () => {
       video2.play();
     });
-    target5.addEventListener("targetLost", () => {
+    target2.addEventListener("targetLost", () => {
       video2.pause();
       video2.currentTime = 0;
     });
