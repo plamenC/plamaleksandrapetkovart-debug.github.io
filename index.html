@@ -32,16 +32,16 @@
     device-orientation-permission-ui="enabled: false"
   >
     <a-assets>
-      <video id="clip4" src="clip4.mp4" autoplay="false" loop="true" playsinline muted crossOrigin="anonymous"></video>
-      <video id="clip6" src="clip6.mp4" autoplay="false" loop="true" playsinline muted crossOrigin="anonymous"></video>
+      <video id="clip0" src="clip0.mp4" autoplay="false" loop="true" playsinline muted crossOrigin="anonymous"></video>
+      <video id="clip1" src="clip1.mp4" autoplay="false" loop="true" playsinline muted crossOrigin="anonymous"></video>
     </a-assets>
 
     <a-entity id="target0" mindar-image-target="targetIndex: 0">
-      <a-video src="#clip4" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
+      <a-video src="#clip0" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
     </a-entity>
 
     <a-entity id="target1" mindar-image-target="targetIndex: 1">
-      <a-video src="#clip6" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
+      <a-video src="#clip1" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
     </a-entity>
 
     <a-entity id="target2" mindar-image-target="targetIndex: 2">
@@ -52,8 +52,8 @@
   </a-scene>
 
   <script>
-    const clip4 = document.getElementById("clip4");
-    const clip6 = document.getElementById("clip6");
+    const clip0 = document.getElementById("clip0");
+    const clip1 = document.getElementById("clip1");
 
     const target0 = document.getElementById("target0");
     const target1 = document.getElementById("target1");
@@ -64,40 +64,40 @@
 
     const syncClipState = () => {
       if (isTarget0Visible) {
-        clip4.play();
+        clip0.play();
       } else {
-        clip4.pause();
-        clip4.currentTime = 0;
+        clip0.pause();
+        clip0.currentTime = 0;
       }
 
       if (isTarget1Visible) {
-        clip6.play();
+        clip1.play();
       } else {
-        clip6.pause();
-        clip6.currentTime = 0;
+        clip1.pause();
+        clip1.currentTime = 0;
       }
     };
 
     target0.addEventListener("targetFound", () => {
       isTarget0Visible = true;
       syncClipState();
-      statusText.textContent = "target0 found, playing clip4";
+      statusText.textContent = "target0 found, playing clip0";
     });
     target0.addEventListener("targetLost", () => {
       isTarget0Visible = false;
       syncClipState();
-      statusText.textContent = "target0 lost, waiting for targets, stopping clip4";
+      statusText.textContent = "target0 lost, waiting for targets, stopping clip0";
     });
 
     target1.addEventListener("targetFound", () => {
       isTarget1Visible = true;
       syncClipState();
-      statusText.textContent = "target1 found, playing clip6";
+      statusText.textContent = "target1 found, playing clip1";
     });
     target1.addEventListener("targetLost", () => {
       isTarget1Visible = false;
       syncClipState();
-      statusText.textContent = "target1 lost, waiting for targets, stopping clip6";
+      statusText.textContent = "target1 lost, waiting for targets, stopping clip1";
     });
 
     target2.addEventListener("targetFound", () => {
