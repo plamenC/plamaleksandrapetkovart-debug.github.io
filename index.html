@@ -235,8 +235,18 @@
       return video._loadPromise;
     };
 
-    const syncVideoState = async (video, visible) => {
+    const setTargetVideoVisible = (targetIndex, visible) => {
+      const videoEntity = targets[targetIndex]?.querySelector("a-video");
+      if (videoEntity) {
+        videoEntity.setAttribute("visible", visible);
+      }
+    };
+
+    const syncVideoState = async (video, visible, targetIndex) => {
       if (!video) return;
+      if (targetIndex !== undefined) {
+        setTargetVideoVisible(targetIndex, visible);
+      }
       if (visible) {
         await loadVideo(video);
         try {
@@ -249,7 +259,7 @@
     };
 
     const syncClipState = () =>
-      Promise.all(videos.map((video, i) => syncVideoState(video, targetVisible[i])));
+      Promise.all(videos.map((video, i) => syncVideoState(video, targetVisible[i], i)));
 
     const formatScreenPoint = (point) =>
       point ? `${Math.round(point.x)}/${Math.round(point.y)}` : "unknown point";
