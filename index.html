@@ -232,6 +232,7 @@
     );
 
     const targetVisible = Array(TARGET_COUNT).fill(false);
+    let debugTargetIndex = null;
 
     const loadVideo = (video) => {
       if (!video || video.dataset.loaded === "true") {
@@ -274,16 +275,57 @@
     const formatScreenPoint = (point) =>
       point ? `${Math.round(point.x)}/${Math.round(point.y)}` : "unknown point";
 
+    const ORIENTATION_RESTART_DELAY_MS = 600;
     let orientationSettlingUntil = 0;
-
-    // window.addEventListener("orientationchange", () => {
-    //   orientationSettlingUntil = performance.now() + 200;
-    //   if (typeof scene.resize === "function") {
-    //     scene.resize();
-    //   }
-    // });
+    let orientationRestartTimer = null;
 
     const isOrientationSettling = () => performance.now() < orientationSettlingUntil;
+
+    const getMindARSystem = () => scene.systems?.["mindar-image-system"];
+
+    const resetTrackingState = () => {
+      targetVisible.fill(false);
+      debugTargetIndex = null;
+      syncClipState();
+    };
+
+    const restartMindARAfterOrientation = () => {
+      orientationSettlingUntil = performance.now() + ORIENTATION_RESTART_DELAY_MS + 300;
+      if (typeof scene.resize === "function") {
+        scene.resize();
+      }
+
+      resetTrackingState();
+      statusText.textContent = "restarting AR after rotation...";
+
+      if (orientationRestartTimer !== null) {
+        clearTimeout(orientationRestartTimer);
+      }
+
+      orientationRestartTimer = setTimeout(() => {
+        orientationRestartTimer = null;
+        const arSystem = getMindARSystem();
+        if (!arSystem?.video) {
+          statusText.textContent = "waiting for targets";
+          return;
+        }
+
+        try {
+          arSystem.stop();
+        } catch (_) { }
+
+        setTimeout(() => {
+          try {
+            arSystem.start();
+            statusText.textContent = "waiting for targets";
+          } catch (_) {
+            statusText.textContent = "AR restart failed — reload the page";
+          }
+        }, 100);
+      }, ORIENTATION_RESTART_DELAY_MS);
+    };
+
+    window.addEventListener("orientationchange", restartMindARAfterOrientation);
 
     const isAbsurdScreenPoint = (point) => {
       const maxDim = Math.max(
@@ -401,8 +443,6 @@
         `video UpperLeft corner is ${formatScreenPoint(videoUpperLeft)}`,
       ].join("\n");
     };
-
-    let debugTargetIndex = null;
 
     const updateDebugStatus = () => {
       if (debugTargetIndex === null) return;
