@@ -274,50 +274,29 @@
     const formatScreenPoint = (point) =>
       point ? `${Math.round(point.x)}/${Math.round(point.y)}` : "unknown";
 
-    let layoutSettlingUntil = 0;
+    let orientationSettlingUntil = 0;
 
-    const markLayoutChange = () => {
-      layoutSettlingUntil = performance.now() + 300;
+    window.addEventListener("orientationchange", () => {
+      orientationSettlingUntil = performance.now() + 200;
       if (typeof scene.resize === "function") {
         scene.resize();
       }
-    };
+    });
 
-    window.addEventListener("resize", markLayoutChange);
-    window.addEventListener("orientationchange", markLayoutChange);
-    window.visualViewport?.addEventListener("resize", markLayoutChange);
+    const isOrientationSettling = () => performance.now() < orientationSettlingUntil;
 
-    const isLayoutSettling = () => performance.now() < layoutSettlingUntil;
-
-    const syncCameraProjection = (camera, renderer) => {
-      const size = new AFRAME.THREE.Vector2();
-      renderer.getSize(size);
-      if (size.x < 1 || size.y < 1) {
-        return false;
-      }
-
-      const aspect = size.x / size.y;
-      if (Math.abs(camera.aspect - aspect) > 0.001) {
-        camera.aspect = aspect;
-        camera.updateProjectionMatrix();
-      }
-
-      return true;
-    };
-
-    const isScreenPointVisible = (point) => {
-      const margin = 32;
-      const viewport = window.visualViewport;
-      const left = viewport?.offsetLeft ?? 0;
-      const top = viewport?.offsetTop ?? 0;
-      const width = viewport?.width ?? window.innerWidth;
-      const height = viewport?.height ?? window.innerHeight;
+    const isAbsurdScreenPoint = (point) => {
+      const maxDim = Math.max(
+        window.innerWidth,
+        window.innerHeight,
+        1
+      );
 
       return (
-        point.x >= left - margin &&
-        point.x <= left + width + margin &&
-        point.y >= top - margin &&
-        point.y <= top + height + margin
+        !Number.isFinite(point.x) ||
+        !Number.isFinite(point.y) ||
+        Math.abs(point.x) > maxDim * 10 ||
+        Math.abs(point.y) > maxDim * 10
       );
     };
 
@@ -325,11 +304,7 @@
       const camera = scene.camera;
       const renderer = scene.renderer;
 
-      if (!camera || !renderer || !worldPoint || isLayoutSettling()) {
-        return null;
-      }
-
-      if (!syncCameraProjection(camera, renderer)) {
+      if (!camera || !renderer || !worldPoint || isOrientationSettling()) {
         return null;
       }
 
@@ -346,10 +321,6 @@
         return null;
       }
 
-      if (Math.abs(projected.x) > 1.05 || Math.abs(projected.y) > 1.05) {
-        return null;
-      }
-
       const rect = renderer.domElement.getBoundingClientRect();
       if (rect.width < 1 || rect.height < 1) {
         return null;
@@ -360,7 +331,7 @@
         y: rect.top + ((1 - projected.y) / 2) * rect.height,
       };
 
-      return isScreenPointVisible(screenPoint) ? screenPoint : null;
+      return isAbsurdScreenPoint(screenPoint) ? null : screenPoint;
     };
 
     const projectEntityCornerToScreen = (entity, localPoint) => {
