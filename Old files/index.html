@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>AR Poster</title>
+
+  <!-- A-Frame -->
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+
+  <!-- MindAR (image tracking) -->
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+</head>
+<style>
+  a-scene {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+  }
+</style>
+<body>
+  <div id="statusText" style="position: fixed; top: 12px; left: 12px; z-index: 9999; background: rgba(0,0,0,0.7); color: #fff; padding: 8px 10px; border-radius: 6px; font-family: Arial, sans-serif;">
+    waiting for targets
+  </div>
+  <a-scene
+    mindar-image="imageTargetSrc: targets.mind; maxTrack: 2;"
+    color-space="sRGB"
+    renderer="colorManagement: true, physicallyCorrectLights"
+    vr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false"
+  >
+    <a-assets>
+      <video id="clip0" src="clip0.mp4" autoplay="false" loop="true" playsinline muted crossOrigin="anonymous"></video>
+      <video id="clip1" src="clip1.mp4" autoplay="false" loop="true" playsinline muted crossOrigin="anonymous"></video>
+    </a-assets>
+
+    <a-entity id="target0" mindar-image-target="targetIndex: 0">
+      <a-video src="#clip0" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="target1" mindar-image-target="targetIndex: 1">
+      <a-video src="#clip1" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="target2" mindar-image-target="targetIndex: 2">
+      <a-plane width="1" height="1" color="#000000" opacity="0.2"></a-plane>
+    </a-entity>
+
+    <a-camera position="0 0 0" look-controls="enabled: true"></a-camera>
+  </a-scene>
+
+  <script>
+    const clip0 = document.getElementById("clip0");
+    const clip1 = document.getElementById("clip1");
+
+    const target0 = document.getElementById("target0");
+    const target1 = document.getElementById("target1");
+    const target2 = document.getElementById("target2");
+    const statusText = document.getElementById("statusText");
+    let isTarget0Visible = false;
+    let isTarget1Visible = false;
+
+    const syncClipState = () => {
+      if (isTarget0Visible) {
+        clip0.play();
+      } else {
+        clip0.pause();
+        clip0.currentTime = 0;
+      }
+
+      if (isTarget1Visible) {
+        clip1.play();
+      } else {
+        clip1.pause();
+        clip1.currentTime = 0;
+      }
+    };
+
+    target0.addEventListener("targetFound", () => {
+      isTarget0Visible = true;
+      syncClipState();
+      statusText.textContent = "target0 found, playing clip0";
+    });
+    target0.addEventListener("targetLost", () => {
+      isTarget0Visible = false;
+      syncClipState();
+      statusText.textContent = "target0 lost, waiting for targets, stopping clip0";
+    });
+
+    target1.addEventListener("targetFound", () => {
+      isTarget1Visible = true;
+      syncClipState();
+      statusText.textContent = "target1 found, playing clip1";
+    });
+    target1.addEventListener("targetLost", () => {
+      isTarget1Visible = false;
+      syncClipState();
+      statusText.textContent = "target1 lost, waiting for targets, stopping clip1";
+    });
+
+    target2.addEventListener("targetFound", () => {
+      statusText.textContent = "target2 found.";
+    });
+    target2.addEventListener("targetLost", () => {
+      statusText.textContent = "target2 lost. waiting for targets";
+    });
+  </script>
+</body>
+</html>

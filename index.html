@@ -1,5 +1,6 @@
 <!doctype html>
 <html>
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -19,93 +20,461 @@
     width: 100vw;
     height: 100vh;
   }
+
+  #fullscreenBtn {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  #fullscreenBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .mindar-ui-scanning .scanning {
+    width: 85vw !important;
+    height: 85vh !important;
+  }
+
+  /* @media (orientation: portrait) {
+    .mindar-ui-scanning .scanning {
+      width: 85vw !important;
+      height: 85vw !important;
+    }
+  }
+
+  @media (orientation: landscape) {
+    .mindar-ui-scanning .scanning {
+      width: 85vh !important;
+      height: 85vh !important;
+    }
+  } */
 </style>
+
 <body>
-  <div id="statusText" style="position: fixed; top: 12px; left: 12px; z-index: 9999; background: rgba(0,0,0,0.7); color: #fff; padding: 8px 10px; border-radius: 6px; font-family: Arial, sans-serif;">
+  <button id="fullscreenBtn" type="button">Enter fullscreen</button>
+  <div id="statusText"
+    style="position: fixed; top: 12px; left: 12px; z-index: 9999; background: rgba(0,0,0,0.7); color: #fff; padding: 8px 10px; border-radius: 6px; font-family: Arial, sans-serif; white-space: pre-line;">
     waiting for targets
   </div>
-  <a-scene
-    mindar-image="imageTargetSrc: targets.mind; maxTrack: 2;"
-    color-space="sRGB"
-    renderer="colorManagement: true, physicallyCorrectLights"
-    vr-mode-ui="enabled: false"
-    device-orientation-permission-ui="enabled: false"
-  >
-    <a-assets>
-      <video id="clip0" src="clip0.mp4" autoplay="false" loop="true" playsinline muted crossOrigin="anonymous"></video>
-      <video id="clip1" src="clip1.mp4" autoplay="false" loop="true" playsinline muted crossOrigin="anonymous"></video>
+  <!-- maximum 1 target at a time ! -->
+  <a-scene mindar-image="imageTargetSrc: targets.mind; maxTrack: 1;" color-space="sRGB"
+    renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false">
+    <a-assets timeout="0">
+      <video id="vid1" data-src="compressed_video/VID1.mp4" preload="none" loop playsinline muted
+        crossorigin="anonymous"></video>
+      <video id="vid12" data-src="compressed_video/VID12.mp4" preload="none" loop playsinline muted
+        crossorigin="anonymous"></video>
+      <video id="vid13" data-src="compressed_video/VID13.mp4" preload="none" loop playsinline muted
+        crossorigin="anonymous"></video>
+      <video id="vid14" data-src="compressed_video/VID14.mp4" preload="none" loop playsinline muted
+        crossorigin="anonymous"></video>
+      <video id="vid15" data-src="compressed_video/VID15.mp4" preload="none" loop playsinline muted
+        crossorigin="anonymous"></video>
+      <video id="vid16" data-src="compressed_video/VID16.mp4" preload="none" loop playsinline muted
+        crossorigin="anonymous"></video>
+      <video id="vid17" data-src="compressed_video/VID17.mp4" preload="none" loop playsinline muted
+        crossorigin="anonymous"></video>
+      <video id="vid18" data-src="compressed_video/VID18.mp4" preload="none" loop playsinline muted
+        crossorigin="anonymous"></video>
+      <video id="vid19" data-src="compressed_video/VID19.mp4" preload="none" loop playsinline muted
+        crossorigin="anonymous"></video>
+      <video id="vid110" data-src="compressed_video/VID110.mp4" preload="none" loop playsinline muted
+        crossorigin="anonymous"></video>
+      <video id="vid111" data-src="compressed_video/VID111.mp4" preload="none" loop playsinline muted
+        crossorigin="anonymous"></video>
+      <video id="vid112" data-src="compressed_video/VID112.mp4" preload="none" loop playsinline muted
+        crossorigin="anonymous"></video>
+      <video id="vid113" data-src="compressed_video/VID113.mp4" preload="none" loop playsinline muted
+        crossorigin="anonymous"></video>
+      <video id="vid114" data-src="compressed_video/VID114.mp4" preload="none" loop playsinline muted
+        crossorigin="anonymous"></video>
+      <video id="vid115" data-src="compressed_video/VID115.mp4" preload="none" loop playsinline muted
+        crossorigin="anonymous"></video>
+      <video id="vid116" data-src="compressed_video/VID116.mp4" preload="none" loop playsinline muted
+        crossorigin="anonymous"></video>
+      <video id="vid117" data-src="compressed_video/VID117.mp4" preload="none" loop playsinline muted
+        crossorigin="anonymous"></video>
+      <video id="vid118" data-src="compressed_video/VID118.mp4" preload="none" loop playsinline muted
+        crossorigin="anonymous"></video>
+      <video id="vid119" data-src="compressed_video/VID119.mp4" preload="none" loop playsinline muted
+        crossorigin="anonymous"></video>
+      <video id="vid120" data-src="compressed_video/VID120.mp4" preload="none" loop playsinline muted
+        crossorigin="anonymous"></video>
+      <video id="vid121" data-src="compressed_video/VID121.mp4" preload="none" loop playsinline muted
+        crossorigin="anonymous"></video>
+      <video id="vid122" data-src="compressed_video/VID122.mp4" preload="none" loop playsinline muted
+        crossorigin="anonymous"></video>
+      <video id="vid123" data-src="compressed_video/VID123.mp4" preload="none" loop playsinline muted
+        crossorigin="anonymous"></video>
     </a-assets>
 
     <a-entity id="target0" mindar-image-target="targetIndex: 0">
-      <a-video src="#clip0" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
+      <a-video src="#vid1" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
     </a-entity>
 
     <a-entity id="target1" mindar-image-target="targetIndex: 1">
-      <a-video src="#clip1" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
+      <a-video src="#vid12" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
     </a-entity>
 
     <a-entity id="target2" mindar-image-target="targetIndex: 2">
-      <a-plane width="1" height="1" color="#000000" opacity="0.2"></a-plane>
+      <a-video src="#vid13" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="target3" mindar-image-target="targetIndex: 3">
+      <a-video src="#vid14" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="target4" mindar-image-target="targetIndex: 4">
+      <a-video src="#vid15" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="target5" mindar-image-target="targetIndex: 5">
+      <a-video src="#vid16" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="target6" mindar-image-target="targetIndex: 6">
+      <a-video src="#vid17" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="target7" mindar-image-target="targetIndex: 7">
+      <a-video src="#vid18" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="target8" mindar-image-target="targetIndex: 8">
+      <a-video src="#vid19" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="target9" mindar-image-target="targetIndex: 9">
+      <a-video src="#vid110" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="target10" mindar-image-target="targetIndex: 10">
+      <a-video src="#vid111" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="target11" mindar-image-target="targetIndex: 11">
+      <a-video src="#vid112" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="target12" mindar-image-target="targetIndex: 12">
+      <a-video src="#vid113" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="target13" mindar-image-target="targetIndex: 13">
+      <a-video src="#vid114" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="target14" mindar-image-target="targetIndex: 14">
+      <a-video src="#vid115" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="target15" mindar-image-target="targetIndex: 15">
+      <a-video src="#vid116" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="target16" mindar-image-target="targetIndex: 16">
+      <a-video src="#vid117" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="target17" mindar-image-target="targetIndex: 17">
+      <a-video src="#vid118" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="target18" mindar-image-target="targetIndex: 18">
+      <a-video src="#vid119" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="target19" mindar-image-target="targetIndex: 19">
+      <a-video src="#vid120" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="target20" mindar-image-target="targetIndex: 20">
+      <a-video src="#vid121" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="target21" mindar-image-target="targetIndex: 21">
+      <a-video src="#vid122" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="target22" mindar-image-target="targetIndex: 22">
+      <a-video src="#vid123" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
     </a-entity>
 
     <a-camera position="0 0 0" look-controls="enabled: true"></a-camera>
   </a-scene>
 
   <script>
-    const clip0 = document.getElementById("clip0");
-    const clip1 = document.getElementById("clip1");
-
-    const target0 = document.getElementById("target0");
-    const target1 = document.getElementById("target1");
-    const target2 = document.getElementById("target2");
+    const TARGET_COUNT = 23;
     const statusText = document.getElementById("statusText");
-    let isTarget0Visible = false;
-    let isTarget1Visible = false;
+    const scene = document.querySelector("a-scene");
 
-    const syncClipState = () => {
-      if (isTarget0Visible) {
-        clip0.play();
-      } else {
-        clip0.pause();
-        clip0.currentTime = 0;
+    const videoIdForTarget = (index) =>
+      index === 0 ? "vid1" : `vid1${index + 1}`;
+
+    const targets = Array.from({ length: TARGET_COUNT }, (_, i) =>
+      document.getElementById(`target${i}`)
+    );
+
+    const videos = targets.map((_, i) =>
+      document.getElementById(videoIdForTarget(i))
+    );
+
+    const targetVisible = Array(TARGET_COUNT).fill(false);
+
+    const loadVideo = (video) => {
+      if (!video || video.dataset.loaded === "true") {
+        return Promise.resolve();
       }
+      if (video._loadPromise) return video._loadPromise;
 
-      if (isTarget1Visible) {
-        clip1.play();
+      const src = video.dataset.src;
+      if (!src) return Promise.resolve();
+
+      video._loadPromise = new Promise((resolve, reject) => {
+        video.addEventListener("loadeddata", () => {
+          video.dataset.loaded = "true";
+          resolve();
+        }, { once: true });
+        video.addEventListener("error", reject, { once: true });
+        video.src = src;
+        video.load();
+      });
+
+      return video._loadPromise;
+    };
+
+    const syncVideoState = async (video, visible) => {
+      if (!video) return;
+      if (visible) {
+        await loadVideo(video);
+        try {
+          await video.play();
+        } catch (_) { }
       } else {
-        clip1.pause();
-        clip1.currentTime = 0;
+        video.pause();
+        video.currentTime = 0;
       }
     };
 
-    target0.addEventListener("targetFound", () => {
-      isTarget0Visible = true;
-      syncClipState();
-      statusText.textContent = "target0 found, playing clip0";
-    });
-    target0.addEventListener("targetLost", () => {
-      isTarget0Visible = false;
-      syncClipState();
-      statusText.textContent = "target0 lost, waiting for targets, stopping clip0";
+    const syncClipState = () =>
+      Promise.all(videos.map((video, i) => syncVideoState(video, targetVisible[i])));
+
+    const formatScreenPoint = (point) =>
+      point ? `${Math.round(point.x)}/${Math.round(point.y)}` : "unknown";
+
+    const projectWorldPointToScreen = (worldPoint) => {
+      const camera = scene.camera;
+      const renderer = scene.renderer;
+
+      if (!camera || !renderer || !worldPoint) {
+        return null;
+      }
+
+      scene.object3D.updateMatrixWorld(true);
+      camera.updateMatrixWorld(true);
+
+      const cameraSpace = worldPoint.clone().applyMatrix4(camera.matrixWorldInverse);
+      if (cameraSpace.z >= 0) {
+        return null;
+      }
+
+      const projected = worldPoint.clone().project(camera);
+      if (!Number.isFinite(projected.x) || !Number.isFinite(projected.y)) {
+        return null;
+      }
+
+      const rect = renderer.domElement.getBoundingClientRect();
+      return {
+        x: rect.left + ((projected.x + 1) / 2) * rect.width,
+        y: rect.top + ((1 - projected.y) / 2) * rect.height,
+      };
+    };
+
+    const projectEntityCornerToScreen = (entity, localPoint) => {
+      const Vector3 = AFRAME.THREE.Vector3;
+
+      if (!entity?.object3D) {
+        return null;
+      }
+
+      const root = entity.getObject3D("mesh") || entity.object3D;
+      root.updateWorldMatrix(true, false);
+
+      const worldPoint = new Vector3().copy(localPoint);
+      root.localToWorld(worldPoint);
+
+      return projectWorldPointToScreen(worldPoint);
+    };
+
+    const upperLeftFromSize = (width, height) =>
+      new AFRAME.THREE.Vector3(-width / 2, height / 2, 0);
+
+    const getMarkerLocalSize = (target) => {
+      const comp = target.components["mindar-image-target"];
+      if (!comp?.postMatrix) return null;
+
+      const position = new AFRAME.THREE.Vector3();
+      const scale = new AFRAME.THREE.Vector3();
+      const quaternion = new AFRAME.THREE.Quaternion();
+      comp.postMatrix.decompose(position, quaternion, scale);
+
+      const markerWidth = scale.x;
+      if (!markerWidth) return null;
+
+      return {
+        width: 1,
+        height: (2 * position.y) / markerWidth,
+      };
+    };
+
+    const getCornerDebugText = (target) => {
+      const videoEntity = target.querySelector("a-video");
+      const markerSize = getMarkerLocalSize(target);
+
+      if (!videoEntity) {
+        return "target UpperLeft corner is unknown\nvideo UpperLeft corner is unknown";
+      }
+
+      const videoWidth = Number(videoEntity.getAttribute("width")) || 1;
+      const videoHeight = Number(videoEntity.getAttribute("height")) || 0.65;
+
+      const targetUpperLeft = markerSize
+        ? projectEntityCornerToScreen(
+            target,
+            upperLeftFromSize(markerSize.width, markerSize.height)
+          )
+        : null;
+      const videoUpperLeft = projectEntityCornerToScreen(
+        videoEntity,
+        upperLeftFromSize(videoWidth, videoHeight)
+      );
+
+      return [
+        `target UpperLeft corner is ${formatScreenPoint(targetUpperLeft)}`,
+        `video UpperLeft corner is ${formatScreenPoint(videoUpperLeft)}`,
+      ].join("\n");
+    };
+
+    let debugTargetIndex = null;
+
+    const updateDebugStatus = () => {
+      if (debugTargetIndex === null) return;
+
+      const target = targets[debugTargetIndex];
+      if (!target || !targetVisible[debugTargetIndex]) return;
+
+      statusText.textContent = [
+        `target${debugTargetIndex} found, playing video ${videoIdForTarget(debugTargetIndex)}`,
+        getCornerDebugText(target),
+      ].join("\n");
+    };
+
+    const bindDebugRenderLoop = () => {
+      scene.addEventListener("renderend", updateDebugStatus);
+    };
+
+    if (scene.hasLoaded) {
+      bindDebugRenderLoop();
+    } else {
+      scene.addEventListener("loaded", bindDebugRenderLoop, { once: true });
+    }
+
+    const fullscreenBtn = document.getElementById("fullscreenBtn");
+
+    const isFullscreen = () =>
+      !!(document.fullscreenElement || document.webkitFullscreenElement);
+
+    const requestPageFullscreen = () => {
+      const el = document.documentElement;
+      const request =
+        el.requestFullscreen ||
+        el.webkitRequestFullscreen ||
+        document.body.requestFullscreen ||
+        document.body.webkitRequestFullscreen;
+
+      if (!request) return Promise.reject(new Error("fullscreen not supported"));
+
+      return Promise.resolve(request.call(el)).catch(() =>
+        Promise.resolve(request.call(document.body))
+      );
+    };
+
+    const exitPageFullscreen = () => {
+      const exit =
+        document.exitFullscreen ||
+        document.webkitExitFullscreen;
+
+      if (!exit) return Promise.reject(new Error("fullscreen not supported"));
+
+      return Promise.resolve(exit.call(document));
+    };
+
+    const updateFullscreenButton = () => {
+      const supported =
+        document.fullscreenEnabled !== false &&
+        !!(
+          document.documentElement.requestFullscreen ||
+          document.documentElement.webkitRequestFullscreen ||
+          document.body.requestFullscreen ||
+          document.body.webkitRequestFullscreen
+        );
+
+      fullscreenBtn.textContent = isFullscreen()
+        ? "Exit fullscreen"
+        : "Enter fullscreen";
+      fullscreenBtn.disabled = !supported;
+    };
+
+    fullscreenBtn.addEventListener("click", () => {
+      const action = isFullscreen()
+        ? exitPageFullscreen()
+        : requestPageFullscreen();
+
+      action.catch(() => {
+        updateFullscreenButton();
+      });
     });
 
-    target1.addEventListener("targetFound", () => {
-      isTarget1Visible = true;
-      syncClipState();
-      statusText.textContent = "target1 found, playing clip1";
-    });
-    target1.addEventListener("targetLost", () => {
-      isTarget1Visible = false;
-      syncClipState();
-      statusText.textContent = "target1 lost, waiting for targets, stopping clip1";
-    });
+    document.addEventListener("fullscreenchange", updateFullscreenButton);
+    document.addEventListener("webkitfullscreenchange", updateFullscreenButton);
+    updateFullscreenButton();
 
-    target2.addEventListener("targetFound", () => {
-      statusText.textContent = "target2 found.";
-    });
-    target2.addEventListener("targetLost", () => {
-      statusText.textContent = "target2 lost. waiting for targets";
+    targets.forEach((target, i) => {
+      if (!target) return;
+
+      target.addEventListener("targetFound", () => {
+        targetVisible[i] = true;
+        debugTargetIndex = i;
+        statusText.textContent = `target${i} found, loading video...`;
+        syncClipState().then(() => {
+          updateDebugStatus();
+        }).catch(() => {
+          statusText.textContent = `target${i} found, video failed to load`;
+        });
+      });
+
+      target.addEventListener("targetLost", () => {
+        targetVisible[i] = false;
+        if (debugTargetIndex === i) {
+          debugTargetIndex = null;
+        }
+        syncClipState();
+        statusText.textContent = `target${i} lost, waiting for targets`;
+      });
     });
   </script>
 </body>
+
 </html>
