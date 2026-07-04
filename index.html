@@ -191,7 +191,7 @@
       <a-video src="#vid123" position="0 0 0" width="1" height="0.65" rotation="0 0 0"></a-video>
     </a-entity>
 
-    <a-camera position="0 0 0" look-controls="enabled: true"></a-camera>
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
   </a-scene>
 
   <script>
@@ -254,10 +254,12 @@
     const formatScreenPoint = (point) =>
       point ? `${Math.round(point.x)}/${Math.round(point.y)}` : "unknown point";
 
-    const ORIENTATION_RESTART_DELAY_MS = 600;
+    const ORIENTATION_RESTART_DELAY_MS = 800;
     const LAYOUT_SETTLE_MS = 300;
+    const LAYOUT_SYNC_DELAYS_MS = [0, 100, 300, 600];
     let layoutSettlingUntil = 0;
     let orientationRestartTimer = null;
+    let layoutSyncTimers = [];
     let isRestartingAR = false;
     let pendingRestartLayoutSync = false;
 
@@ -267,7 +269,16 @@
       layoutSettlingUntil = performance.now() + extraMs;
     };
 
+    const clearLayoutSettling = () => {
+      layoutSettlingUntil = 0;
+    };
+
     const getMindARSystem = () => scene.systems?.["mindar-image-system"];
+
+    const getSceneCamera = () => {
+      const cameraEl = scene.querySelector("a-camera");
+      return cameraEl?.getObject3D("camera") || scene.camera;
+    };
 
     const syncARLayout = () => {
       const arSystem = getMindARSystem();
@@ -283,13 +294,23 @@
       }
     };
 
+    const clearScheduledLayoutSync = () => {
+      layoutSyncTimers.forEach(clearTimeout);
+      layoutSyncTimers = [];
+    };
+
+    const scheduleSyncARLayout = () => {
+      clearScheduledLayoutSync();
+      LAYOUT_SYNC_DELAYS_MS.forEach((delayMs) => {
+        layoutSyncTimers.push(setTimeout(syncARLayout, delayMs));
+      });
+      requestAnimationFrame(syncARLayout);
+    };
+
     const onARReady = () => {
       isRestartingAR = false;
-      syncARLayout();
-      requestAnimationFrame(() => {
-        syncARLayout();
-        markLayoutSettling(LAYOUT_SETTLE_MS);
-      });
+      scheduleSyncARLayout();
+      markLayoutSettling(LAYOUT_SETTLE_MS);
 
       if (pendingRestartLayoutSync) {
         pendingRestartLayoutSync = false;
@@ -356,47 +377,22 @@
 
     window.addEventListener("orientationchange", restartMindARAfterOrientation);
 
-    const syncCameraProjection = (camera, renderer) => {
-      const size = new AFRAME.THREE.Vector2();
-      renderer.getSize(size);
-      if (size.x < 1 || size.y < 1) {
-        return false;
-      }
-
-      const aspect = size.x / size.y;
-      if (Math.abs(camera.aspect - aspect) > 0.001) {
-        camera.aspect = aspect;
-        camera.updateProjectionMatrix();
-      }
-
-      return true;
-    };
-
-    const isScreenPointVisible = (point) => {
+    const isScreenPointVisible = (point, rect) => {
       const margin = 32;
-      const viewport = window.visualViewport;
-      const left = viewport?.offsetLeft ?? 0;
-      const top = viewport?.offsetTop ?? 0;
-      const width = viewport?.width ?? window.innerWidth;
-      const height = viewport?.height ?? window.innerHeight;
 
       return (
-        point.x >= left - margin &&
-        point.x <= left + width + margin &&
-        point.y >= top - margin &&
-        point.y <= top + height + margin
+        point.x >= rect.left - margin &&
+        point.x <= rect.right + margin &&
+        point.y >= rect.top - margin &&
+        point.y <= rect.bottom + margin
       );
     };
 
     const projectWorldPointToScreen = (worldPoint) => {
-      const camera = scene.camera;
+      const camera = getSceneCamera();
       const renderer = scene.renderer;
 
       if (!camera || !renderer || !worldPoint || isLayoutSettling()) {
-        return null;
-      }
-
-      if (!syncCameraProjection(camera, renderer)) {
         return null;
       }
 
@@ -427,7 +423,7 @@
         y: rect.top + ((1 - projected.y) / 2) * rect.height,
       };
 
-      return isScreenPointVisible(screenPoint) ? screenPoint : null;
+      return isScreenPointVisible(screenPoint, rect) ? screenPoint : null;
     };
 
     const projectEntityCornerToScreen = (entity, localPoint) => {
@@ -526,8 +522,11 @@
       target.addEventListener("targetFound", () => {
         targetVisible[i] = true;
         debugTargetIndex = i;
+        syncARLayout();
+        clearLayoutSettling();
         statusText.textContent = `target${i} found, loading video...`;
         syncClipState().then(() => {
+          syncARLayout();
           updateDebugStatus();
         }).catch(() => {
           statusText.textContent = `target${i} found, video failed to load`;
