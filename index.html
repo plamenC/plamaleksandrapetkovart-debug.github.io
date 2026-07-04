@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>AR Poster</title>
+  <title>Plamen's AR Poster</title>
 
   <!-- A-Frame -->
   <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
@@ -41,10 +41,10 @@
     cursor: not-allowed;
   }
 
-  .mindar-ui-scanning .scanning {
+  /* .mindar-ui-scanning .scanning {
     width: 85vw !important;
     height: 85vh !important;
-  }
+  } */
 
   /* @media (orientation: portrait) {
     .mindar-ui-scanning .scanning {
@@ -272,16 +272,16 @@
       Promise.all(videos.map((video, i) => syncVideoState(video, targetVisible[i])));
 
     const formatScreenPoint = (point) =>
-      point ? `${Math.round(point.x)}/${Math.round(point.y)}` : "unknown";
+      point ? `${Math.round(point.x)}/${Math.round(point.y)}` : "unknown point";
 
     let orientationSettlingUntil = 0;
 
-    window.addEventListener("orientationchange", () => {
-      orientationSettlingUntil = performance.now() + 200;
-      if (typeof scene.resize === "function") {
-        scene.resize();
-      }
-    });
+    // window.addEventListener("orientationchange", () => {
+    //   orientationSettlingUntil = performance.now() + 200;
+    //   if (typeof scene.resize === "function") {
+    //     scene.resize();
+    //   }
+    // });
 
     const isOrientationSettling = () => performance.now() < orientationSettlingUntil;
 
@@ -387,9 +387,9 @@
 
       const targetUpperLeft = markerSize
         ? projectEntityCornerToScreen(
-            target,
-            upperLeftFromSize(markerSize.width, markerSize.height)
-          )
+          target,
+          upperLeftFromSize(markerSize.width, markerSize.height)
+        )
         : null;
       const videoUpperLeft = projectEntityCornerToScreen(
         videoEntity,
