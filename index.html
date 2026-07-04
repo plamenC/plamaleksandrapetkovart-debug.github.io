@@ -255,12 +255,61 @@
       point ? `${Math.round(point.x)}/${Math.round(point.y)}` : "unknown point";
 
     const ORIENTATION_RESTART_DELAY_MS = 600;
-    let orientationSettlingUntil = 0;
+    const LAYOUT_SETTLE_MS = 300;
+    let layoutSettlingUntil = 0;
     let orientationRestartTimer = null;
+    let isRestartingAR = false;
+    let pendingRestartLayoutSync = false;
 
-    const isOrientationSettling = () => performance.now() < orientationSettlingUntil;
+    const isLayoutSettling = () => performance.now() < layoutSettlingUntil;
+
+    const markLayoutSettling = (extraMs = LAYOUT_SETTLE_MS) => {
+      layoutSettlingUntil = performance.now() + extraMs;
+    };
 
     const getMindARSystem = () => scene.systems?.["mindar-image-system"];
+
+    const syncARLayout = () => {
+      const arSystem = getMindARSystem();
+      if (!arSystem?.video || !arSystem?.controller) {
+        return;
+      }
+
+      if (typeof scene.resize === "function") {
+        scene.resize();
+      }
+      if (typeof arSystem._resize === "function") {
+        arSystem._resize();
+      }
+    };
+
+    const onARReady = () => {
+      isRestartingAR = false;
+      syncARLayout();
+      requestAnimationFrame(() => {
+        syncARLayout();
+        markLayoutSettling(LAYOUT_SETTLE_MS);
+      });
+
+      if (pendingRestartLayoutSync) {
+        pendingRestartLayoutSync = false;
+        statusText.textContent = "waiting for targets";
+      }
+    };
+
+    scene.addEventListener("arReady", onARReady);
+
+    const onLayoutChange = () => {
+      if (isRestartingAR) {
+        return;
+      }
+
+      markLayoutSettling();
+      syncARLayout();
+    };
+
+    window.addEventListener("resize", onLayoutChange);
+    window.visualViewport?.addEventListener("resize", onLayoutChange);
 
     const resetTrackingState = () => {
       targetVisible.fill(false);
@@ -269,11 +318,9 @@
     };
 
     const restartMindARAfterOrientation = () => {
-      orientationSettlingUntil = performance.now() + ORIENTATION_RESTART_DELAY_MS + 300;
-      if (typeof scene.resize === "function") {
-        scene.resize();
-      }
-
+      isRestartingAR = true;
+      pendingRestartLayoutSync = true;
+      markLayoutSettling(ORIENTATION_RESTART_DELAY_MS + LAYOUT_SETTLE_MS);
       resetTrackingState();
       statusText.textContent = "restarting AR after rotation...";
 
@@ -285,6 +332,8 @@
         orientationRestartTimer = null;
         const arSystem = getMindARSystem();
         if (!arSystem?.video) {
+          isRestartingAR = false;
+          pendingRestartLayoutSync = false;
           statusText.textContent = "waiting for targets";
           return;
         }
@@ -296,8 +345,9 @@
         setTimeout(() => {
           try {
             arSystem.start();
-            statusText.textContent = "waiting for targets";
           } catch (_) {
+            isRestartingAR = false;
+            pendingRestartLayoutSync = false;
             statusText.textContent = "AR restart failed — reload the page";
           }
         }, 100);
@@ -306,18 +356,35 @@
 
     window.addEventListener("orientationchange", restartMindARAfterOrientation);
 
-    const isAbsurdScreenPoint = (point) => {
-      const maxDim = Math.max(
-        window.innerWidth,
-        window.innerHeight,
-        1
-      );
+    const syncCameraProjection = (camera, renderer) => {
+      const size = new AFRAME.THREE.Vector2();
+      renderer.getSize(size);
+      if (size.x < 1 || size.y < 1) {
+        return false;
+      }
+
+      const aspect = size.x / size.y;
+      if (Math.abs(camera.aspect - aspect) > 0.001) {
+        camera.aspect = aspect;
+        camera.updateProjectionMatrix();
+      }
+
+      return true;
+    };
+
+    const isScreenPointVisible = (point) => {
+      const margin = 32;
+      const viewport = window.visualViewport;
+      const left = viewport?.offsetLeft ?? 0;
+      const top = viewport?.offsetTop ?? 0;
+      const width = viewport?.width ?? window.innerWidth;
+      const height = viewport?.height ?? window.innerHeight;
 
       return (
-        !Number.isFinite(point.x) ||
-        !Number.isFinite(point.y) ||
-        Math.abs(point.x) > maxDim * 10 ||
-        Math.abs(point.y) > maxDim * 10
+        point.x >= left - margin &&
+        point.x <= left + width + margin &&
+        point.y >= top - margin &&
+        point.y <= top + height + margin
       );
     };
 
@@ -325,7 +392,11 @@
       const camera = scene.camera;
       const renderer = scene.renderer;
 
-      if (!camera || !renderer || !worldPoint || isOrientationSettling()) {
+      if (!camera || !renderer || !worldPoint || isLayoutSettling()) {
+        return null;
+      }
+
+      if (!syncCameraProjection(camera, renderer)) {
         return null;
       }
 
@@ -342,6 +413,10 @@
         return null;
       }
 
+      if (Math.abs(projected.x) > 1.05 || Math.abs(projected.y) > 1.05) {
+        return null;
+      }
+
       const rect = renderer.domElement.getBoundingClientRect();
       if (rect.width < 1 || rect.height < 1) {
         return null;
@@ -352,7 +427,7 @@
         y: rect.top + ((1 - projected.y) / 2) * rect.height,
       };
 
-      return isAbsurdScreenPoint(screenPoint) ? null : screenPoint;
+      return isScreenPointVisible(screenPoint) ? screenPoint : null;
     };
 
     const projectEntityCornerToScreen = (entity, localPoint) => {
